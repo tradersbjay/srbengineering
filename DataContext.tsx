@@ -262,17 +262,28 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getStats = () => {
-    const currentYear = new Date().getFullYear();
-    const experience = currentYear - 2018;
+    // Calculate years of experience with March 31 as anniversary date
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const annualAnniversary = new Date(currentYear, 2, 31); // March 31
+    
+    // If we haven't passed March 31 yet this year, use last year's anniversary
+    let experience = currentYear - 2018;
+    if (today < annualAnniversary) {
+      experience = currentYear - 2018 - 1;
+    }
+    
     const residentialCount = projects.filter(p => p.category === 'Residential').length;
     const commercialCount = projects.filter(p => p.category === 'Commercial').length;
     const steelCount = projects.filter(p => p.category === 'Steel/Prefab').length;
+    const consultingCount = projects.filter(p => p.category === 'Consulting').length;
 
     return [
       { label: "Years of Experience", value: experience, suffix: "+" },
       { label: "Residential Projects", value: residentialCount },
       { label: "Commercial Buildings", value: commercialCount },
       { label: "Steel/Prefab Structures", value: steelCount },
+      { label: "Consulting Projects", value: consultingCount },
     ];
   };
 

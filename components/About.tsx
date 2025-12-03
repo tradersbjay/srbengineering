@@ -58,13 +58,13 @@ const About: React.FC = () => {
         <div className="bg-brand-blue rounded-xl p-10 md:p-16 text-white shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-brand-yellow opacity-20 rounded-full"></div>
 
-          <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/20">
+          <div className="relative z-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 text-center">
             {stats.map((stat, index) => (
-              <div key={index} className="p-2">
-                <div className="text-4xl md:text-5xl font-extrabold text-brand-yellow mb-2">
+              <div key={index} className="p-2 border-r border-white/20 last:border-r-0">
+                <div className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-brand-yellow mb-2">
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-gray-200 text-sm md:text-base font-medium tracking-wide uppercase">
+                <div className="text-gray-200 text-xs md:text-sm lg:text-base font-medium tracking-wide uppercase">
                   {stat.label}
                 </div>
               </div>
