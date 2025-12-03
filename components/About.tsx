@@ -35,7 +35,7 @@ const About: React.FC = () => {
               <p className="font-semibold text-gray-800">Reg No: {COMPANY_INFO.regNo}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gray-50 p-6 rounded-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-3 mb-3">
                   <Target className="text-brand-blue w-6 h-6" />
