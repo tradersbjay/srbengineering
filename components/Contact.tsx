@@ -32,8 +32,8 @@ const Contact: React.FC = () => {
 
   // Fetch services from Supabase and populate dropdown
   useEffect(() => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = (import.meta.env as any).VITE_SUPABASE_URL;
+    const supabaseAnonKey = (import.meta.env as any).VITE_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) return;
 
     const fetchServices = async () => {
@@ -65,7 +65,7 @@ const Contact: React.FC = () => {
 
   // Initialize EmailJS
   useEffect(() => {
-    const publicKey = process.env.VITE_EMAILJS_PUBLIC_KEY;
+    const publicKey = (import.meta.env as any).VITE_EMAILJS_PUBLIC_KEY;
     if (!publicKey) {
       console.error('EmailJS public key not configured in environment variables');
       return;
@@ -102,8 +102,8 @@ const Contact: React.FC = () => {
       }
 
       // Save to Supabase if configured
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const supabaseUrl = (import.meta.env as any).VITE_SUPABASE_URL;
+      const supabaseAnonKey = (import.meta.env as any).VITE_SUPABASE_ANON_KEY;
       
       if (supabaseUrl && supabaseAnonKey) {
         const { error: dbError } = await supabase
@@ -124,17 +124,26 @@ const Contact: React.FC = () => {
       }
 
       // Send email using EmailJS
+      const serviceId = (import.meta.env as any).VITE_EMAILJS_SERVICE_ID;
+      const templateId = (import.meta.env as any).VITE_EMAILJS_TEMPLATE_ID;
+      const fromEmail = (import.meta.env as any).VITE_EMAILJS_FROM_EMAIL;
+      const toEmail = (import.meta.env as any).VITE_EMAILJS_RECIPIENT_EMAIL;
+
+      if (!serviceId || !templateId) {
+        throw new Error('EmailJS configuration missing. Please contact the administrator.');
+      }
+
       await emailjs.send(
-        process.env.VITE_EMAILJS_SERVICE_ID!,
-        process.env.VITE_EMAILJS_TEMPLATE_ID!,
+        serviceId,
+        templateId,
         {
           full_name: formData.full_name,
           phone_number: formData.phone_number,
           email_address: formData.email_address,
           interested_service: formData.interested_service,
           message: formData.message,
-          from_email: process.env.VITE_EMAILJS_FROM_EMAIL!,
-          to_email: process.env.VITE_EMAILJS_RECIPIENT_EMAIL!,
+          from_email: fromEmail || 'noreply@srbeng.com',
+          to_email: toEmail || 'info@srbeng.com',
           reply_to: formData.email_address
         }
       );
