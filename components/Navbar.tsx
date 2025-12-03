@@ -1,9 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { scrollToSection } from '../utils.tsx';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSSR, setIsSSR] = useState(true); // Server-side render flag
+
+  // Initialize on client-side only
+  useEffect(() => {
+    setIsSSR(false);
+    
+    // Restore menu state from localStorage if available
+    const storedState = isSSR ? null : localStorage.getItem('navbar-menu-open');
+    if (storedState === 'true') {
+      setIsOpen(true);
+    }
+  }, []);
+
+  // Persist menu state to localStorage
+  useEffect(() => {
+    if (!isSSR) {
+      localStorage.setItem('navbar-menu-open', isOpen ? 'true' : 'false');
+    }
+  }, [isOpen, isSSR]);
+
+  // Close menu on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    if (!isSSR && isOpen) {
+      window.addEventListener('keydown', handleEscape);
+      return () => window.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen, isSSR]);
 
   const navLinks = [
     { name: 'Home', href: '#home' },
@@ -18,33 +51,42 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-100 h-20">
+    <nav className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-100 min-h-16 md:h-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-        <div className="flex justify-between items-center h-full">
-          <div className="flex items-center">
+        <div className="flex justify-between items-center h-full py-2 md:py-0">
+          {/* Brand Logo - Responsive */}
+          <div className="flex items-center flex-shrink-0">
             <a 
               href="#home" 
               onClick={(e) => handleNavClick(e, '#home')}
-              className="flex-shrink-0 flex items-center gap-3"
+              className="flex items-center gap-2 md:gap-3 group transition-opacity hover:opacity-80"
+              aria-label="S.R.B. Engineering & Construction - Home"
             >
-              <div className="w-20 h-10 bg-brand-yellow flex items-center justify-center font-bold text-xl rounded shadow-sm text-black">
+              {/* Badge - Responsive Size */}
+              <div className="w-12 h-6 md:w-20 md:h-10 bg-brand-yellow flex items-center justify-center font-bold text-xs md:text-xl rounded shadow-sm text-black flex-shrink-0">
                 S.R.B.
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-xl tracking-tight text-brand-black leading-none">
-                  ENGINEERING & CONSTRUCTION
+              
+              {/* Brand Text - Responsive */}
+              <div className="flex flex-col hidden sm:flex">
+                {/* Full name - visible from sm breakpoint */}
+                <span className="font-bold text-xs md:text-base lg:text-xl tracking-tight text-brand-black leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] md:max-w-none">
+                  S.R.B. ENG & CONST
                 </span>
+                {/* Abbreviated - hidden from sm breakpoint */}
+                <span className="text-xs text-gray-600 hidden">Engineering Solutions</span>
               </div>
             </a>
           </div>
           
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation - Hidden on mobile */}
+          <div className="hidden md:flex items-center space-x-8 ml-auto">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-gray-700 hover:text-brand-blue hover:border-b-2 hover:border-brand-blue px-1 py-2 text-sm font-medium transition-colors"
+                className="text-gray-700 hover:text-brand-blue hover:border-b-2 hover:border-brand-blue px-1 py-2 text-sm font-medium transition-all duration-300 relative"
               >
                 {link.name}
               </a>
@@ -52,47 +94,60 @@ const Navbar: React.FC = () => {
             <a 
               href="#contact"
               onClick={(e) => handleNavClick(e, '#contact')}
-              className="bg-brand-yellow hover:bg-yellow-400 text-black px-5 py-2.5 rounded-sm font-bold text-sm transition-colors shadow-sm"
+              className="bg-brand-yellow hover:bg-yellow-400 text-black px-5 py-2.5 rounded-sm font-bold text-sm transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
             >
-              Contact Us
+              Contact
             </a>
           </div>
 
-          <div className="flex items-center md:hidden">
+          {/* Mobile Menu Button - Visible on mobile only */}
+          <div className="flex items-center md:hidden ml-auto">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-brand-blue focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-brand-blue hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-blue transition-all duration-300 min-h-[44px] min-w-[44px]"
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? (
+                <X className="h-6 w-6 transition-transform duration-300 rotate-90" />
+              ) : (
+                <Menu className="h-6 w-6 transition-transform duration-300" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 absolute top-20 left-0 w-full shadow-lg z-50">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="text-gray-700 hover:bg-gray-50 hover:text-brand-blue block px-3 py-2 rounded-md text-base font-medium"
-              >
-                {link.name}
-              </a>
-            ))}
+      {/* Mobile Menu - Animated Dropdown */}
+      <div
+        id="mobile-menu"
+        className={`md:hidden bg-white border-t border-gray-100 origin-top transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen 
+            ? 'max-h-96 opacity-100 visible shadow-lg' 
+            : 'max-h-0 opacity-0 invisible'
+        }`}
+      >
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          {navLinks.map((link) => (
             <a
-              href="#contact"
-              onClick={(e) => handleNavClick(e, '#contact')}
-              className="text-gray-700 hover:bg-gray-50 hover:text-brand-blue block px-3 py-2 rounded-md text-base font-medium"
+              key={link.name}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-gray-700 hover:bg-gray-50 hover:text-brand-blue block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-blue min-h-[44px] flex items-center"
             >
-              Contact Us
+              {link.name}
             </a>
-          </div>
+          ))}
+          <a
+            href="#contact"
+            onClick={(e) => handleNavClick(e, '#contact')}
+            className="bg-brand-yellow hover:bg-yellow-400 text-black block px-3 py-2 rounded-md text-base font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-blue min-h-[44px] flex items-center mt-2"
+          >
+            Contact Us
+          </a>
         </div>
-      )}
+      </div>
     </nav>
   );
 };
