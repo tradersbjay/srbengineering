@@ -73,8 +73,8 @@ const Navbar: React.FC = () => {
                 <span className="font-bold text-sm md:text-base lg:text-xl tracking-tight text-brand-black leading-tight whitespace-normal max-w-[180px] md:max-w-none">
                   ENGINEERING &amp; <wbr/>CONSTRUCTION
                 </span>
-                {/* Optional subtitle only on md+ */}
-                <span className="text-xs text-gray-600 hidden md:block">Engineering &amp; Construction</span>
+                {/* subtitle intentionally hidden to avoid duplicate text on md+ */}
+                <span className="text-xs text-gray-600 hidden">Engineering &amp; Construction</span>
               </div>
             </a>
           </div>
