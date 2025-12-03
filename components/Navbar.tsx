@@ -67,14 +67,14 @@ const Navbar: React.FC = () => {
                 S.R.B.
               </div>
               
-              {/* Brand Text - Responsive */}
-              <div className="flex flex-col hidden sm:flex">
-                {/* Full name - visible from sm breakpoint */}
-                <span className="font-bold text-xs md:text-base lg:text-xl tracking-tight text-brand-black leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] md:max-w-none">
-                  S.R.B. ENG & CONST
+              {/* Brand Text - Responsive (now visible on mobile, wraps gracefully) */}
+              <div className="flex flex-col ml-2 min-w-0">
+                {/* Full name - visible on all sizes but adapts */}
+                <span className="font-bold text-sm md:text-base lg:text-xl tracking-tight text-brand-black leading-tight whitespace-normal max-w-[180px] md:max-w-none">
+                  ENGINEERING &amp; <wbr/>CONSTRUCTION
                 </span>
-                {/* Abbreviated - hidden from sm breakpoint */}
-                <span className="text-xs text-gray-600 hidden">Engineering Solutions</span>
+                {/* Optional subtitle only on md+ */}
+                <span className="text-xs text-gray-600 hidden md:block">Engineering &amp; Construction</span>
               </div>
             </a>
           </div>
