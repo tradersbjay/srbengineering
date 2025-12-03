@@ -124,10 +124,10 @@ const Contact: React.FC = () => {
       }
 
       // Send email using EmailJS
-      const serviceId = (import.meta.env as any).VITE_EMAILJS_SERVICE_ID;
-      const templateId = (import.meta.env as any).VITE_EMAILJS_TEMPLATE_ID;
-      const fromEmail = (import.meta.env as any).VITE_EMAILJS_FROM_EMAIL;
-      const toEmail = (import.meta.env as any).VITE_EMAILJS_RECIPIENT_EMAIL;
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const fromEmail = import.meta.env.VITE_EMAILJS_FROM_EMAIL;
+      const toEmail = import.meta.env.VITE_EMAILJS_RECIPIENT_EMAIL;
 
       if (!serviceId || !templateId) {
         throw new Error('EmailJS configuration missing. Please contact the administrator.');

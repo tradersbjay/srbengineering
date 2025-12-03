@@ -131,6 +131,10 @@ const Admin: React.FC = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingEditImage, setUploadingEditImage] = useState(false);
 
+  // Icon upload states
+  const [uploadingIcon, setUploadingIcon] = useState(false);
+  const [uploadingEditIcon, setUploadingEditIcon] = useState(false);
+
   const [iconPickerOpen, setIconPickerOpen] = useState(false);
   const [iconPickerTarget, setIconPickerTarget] = useState<'new' | 'edit'>('new');
   const [iconSearch, setIconSearch] = useState('');
@@ -274,6 +278,55 @@ const Admin: React.FC = () => {
       console.error('Upload error:', error);
       alert('Failed to process image. Please try again.');
       isEdit ? setUploadingEditImage(false) : setUploadingImage(false);
+    }
+  };
+
+  const handleIconUpload = async (file: File, isEdit: boolean = false) => {
+    if (!file) return;
+
+    // Validate file type - accept SVG, PNG, and other icon formats
+    const validTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please select a valid icon file (SVG, PNG, JPEG, GIF, or WebP)');
+      return;
+    }
+
+    // Validate file size (max 2MB for icons)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Icon size must be less than 2MB');
+      return;
+    }
+
+    try {
+      isEdit ? setUploadingEditIcon(true) : setUploadingIcon(true);
+
+      // Convert file to base64 (client-side, no server needed) - same pattern as image upload
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        const base64String = e.target?.result as string;
+        
+        // Update the appropriate state with the base64 icon URL
+        if (isEdit) {
+          setEditingService({ ...editingService, icon: base64String });
+        } else {
+          setNewService({ ...newService, icon: base64String });
+        }
+        alert('Icon uploaded successfully!');
+        isEdit ? setUploadingEditIcon(false) : setUploadingIcon(false);
+      };
+
+      reader.onerror = () => {
+        console.error('File read error');
+        alert('Failed to read icon file. Please try again.');
+        isEdit ? setUploadingEditIcon(false) : setUploadingIcon(false);
+      };
+
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to process icon. Please try again.');
+      isEdit ? setUploadingEditIcon(false) : setUploadingIcon(false);
     }
   };
 
@@ -847,31 +900,46 @@ const Admin: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Icon (token or URL)</label>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => openIconPicker('new')}
-                    className="px-3 py-2 bg-gray-100 rounded border text-sm hover:bg-gray-200"
-                  >
-                    Pick from library
-                  </button>
-                  <div className="text-xs text-gray-500">(or enter URL below)</div>
-                </div>
-                <input
-                  type="text"
-                  className="w-full border p-2 rounded"
-                  placeholder="(optional) enter image URL - or keep blank to use library token"
-                  value={newService.icon || ''}
-                  onChange={e => setNewService({ ...newService, icon: e.target.value })}
-                />
-                {newService.icon && /^(https?:\/\/|data:)/i.test(newService.icon) && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="w-10 h-10 p-1 rounded bg-white border">
-                      <IconRenderer icon={newService.icon} />
-                    </div>
-                    <div className="text-xs text-gray-600 truncate">{newService.icon}</div>
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleIconUpload(file, false);
+                    }}
+                    className="w-full border p-2 rounded text-sm"
+                    disabled={uploadingIcon}
+                  />
+                  {uploadingIcon && (
+                    <div className="text-sm text-blue-600">Uploading icon...</div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openIconPicker('new')}
+                      className="px-3 py-2 bg-gray-100 rounded border text-sm hover:bg-gray-200"
+                    >
+                      Pick from library
+                    </button>
+                    <div className="text-xs text-gray-500">(or enter URL below)</div>
                   </div>
-                )}
+                  <input
+                    type="text"
+                    className="w-full border p-2 rounded"
+                    placeholder="(optional) enter image URL - or keep blank to use library token"
+                    value={newService.icon || ''}
+                    onChange={e => setNewService({ ...newService, icon: e.target.value })}
+                  />
+                  {newService.icon && /^(https?:\/\/|data:)/i.test(newService.icon) && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <div className="w-10 h-10 p-1 rounded bg-white border">
+                        <IconRenderer icon={newService.icon} />
+                      </div>
+                      <div className="text-xs text-gray-600 truncate">{newService.icon}</div>
+                    </div>
+                  )}
+                </div>
               </div>
               <button 
                 type="button" 
@@ -906,15 +974,30 @@ const Admin: React.FC = () => {
                           rows={3}
                         />
                         <div className="grid grid-cols-2 gap-2">
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => openIconPicker('edit')}
-                              className="px-3 py-1 bg-gray-100 rounded border text-sm hover:bg-gray-200"
-                            >
-                              Pick from library
-                            </button>
-                            <div className="text-xs text-gray-500">(or keep URL below)</div>
+                          <div className="space-y-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleIconUpload(file, true);
+                              }}
+                              className="w-full border p-2 rounded text-sm"
+                              disabled={uploadingEditIcon}
+                            />
+                            {uploadingEditIcon && (
+                              <div className="text-sm text-blue-600">Uploading icon...</div>
+                            )}
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => openIconPicker('edit')}
+                                className="px-3 py-1 bg-gray-100 rounded border text-sm hover:bg-gray-200"
+                              >
+                                Pick from library
+                              </button>
+                              <div className="text-xs text-gray-500">(or keep URL below)</div>
+                            </div>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700">Or Icon URL</label>
