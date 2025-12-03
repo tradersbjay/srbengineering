@@ -41,17 +41,20 @@ const IconRenderer: React.FC<{ icon?: string; className?: string }> = ({ icon, c
   
   // Check if it's a URL
   if (/^(https?:\/\/|data:)/i.test(icon)) {
-    // For external URLs, use proxy on production to avoid CORS issues
+    // For external URLs, use appropriate proxy method
     let imageUrl = icon;
     
-    // Check if it's an external URL (not data URI) and we're in production
+    // Check if it's an external URL (not data URI)
     if (/^https?:\/\//.test(icon) && typeof window !== 'undefined') {
-      // On production (vercel), use the proxy endpoint
-      const isProduction = window.location.hostname !== 'localhost' && 
-                          window.location.hostname !== '127.0.0.1';
+      const isProduction = window.location.hostname.includes('srbeng.com') || 
+                          window.location.hostname.includes('vercel.app');
       
       if (isProduction) {
+        // On production (vercel), use the custom proxy endpoint
         imageUrl = `/api/proxy-icon?url=${encodeURIComponent(icon)}`;
+      } else {
+        // On development, use public CORS proxy service
+        imageUrl = `https://corsproxy.io/?${encodeURIComponent(icon)}`;
       }
     }
     
@@ -62,9 +65,10 @@ const IconRenderer: React.FC<{ icon?: string; className?: string }> = ({ icon, c
         className={className} 
         style={{ filter: 'brightness(0) saturate(100%) invert(28%) sepia(84%) saturate(1211%) hue-rotate(172deg) brightness(101%) contrast(101%)' }}
         onError={(e) => {
-          // If proxy fails, try the original URL
-          if ((e.target as HTMLImageElement).src !== icon) {
-            (e.target as HTMLImageElement).src = icon;
+          const img = e.target as HTMLImageElement;
+          // If proxy fails, try direct URL as last resort
+          if (!img.src.includes('corsproxy') && !img.src.includes('/api/proxy-icon') && img.src !== icon) {
+            img.src = icon;
           }
         }}
       />

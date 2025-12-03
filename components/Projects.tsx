@@ -1,15 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../DataContext';
-import { X, Calendar, MapPin, Tag } from 'lucide-react';
+import { X, Calendar, MapPin, Tag, ChevronLeft, ChevronRight, Maximize2, Image as ImageIcon } from 'lucide-react';
 import { Project } from '../types';
 
 const Projects: React.FC = () => {
   const { projects } = useData();
   const [filter, setFilter] = useState<string>('All');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [imageLoadError, setImageLoadError] = useState<Set<string>>(new Set());
   
   // Calculate unique categories from existing projects
   const categories = ['All', ...Array.from(new Set(projects.map(p => p.category)))];
+
+  // Optimize image URL for better performance
+  const optimizeImageUrl = (url: string, size: 'thumb' | 'medium' | 'large' = 'medium'): string => {
+    if (!url) return '';
+    
+    // If it's a Supabase storage URL, we can add transformations
+    if (url.includes('supabase')) {
+      const sizeMap = {
+        thumb: '400x300',
+        medium: '800x600',
+        large: '1600x1200'
+      };
+      // Format: url?width=800&height=600
+      return `${url}${url.includes('?') ? '&' : '?'}width=${sizeMap[size].split('x')[0]}&height=${sizeMap[size].split('x')[1]}`;
+    }
+    
+    return url;
+  };
+
+  // Handle image load errors
+  const handleImageError = (imageUrl: string) => {
+    setImageLoadError(prev => new Set([...prev, imageUrl]));
+  };
+
+  // Placeholder component when image fails to load
+  const ImagePlaceholder = ({ title }: { title: string }) => (
+    <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+      <div className="text-center">
+        <ImageIcon size={48} className="text-gray-500 mx-auto mb-2" />
+        <p className="text-gray-600 text-sm">{title}</p>
+      </div>
+    </div>
+  );
+
+  // Lightbox image viewer
+  const LightboxViewer = ({ image, onClose }: { image: string; onClose: () => void }) => (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4">
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors p-2"
+      >
+        <X size={32} />
+      </button>
+      
+      <div className="relative w-full h-full max-w-6xl flex items-center justify-center">
+        {imageLoadError.has(image) ? (
+          <ImagePlaceholder title="Image failed to load" />
+        ) : (
+          <img
+            src={optimizeImageUrl(image, 'large')}
+            alt="Full size project image"
+            className="w-full h-full object-contain rounded-lg"
+            onError={() => handleImageError(image)}
+          />
+        )}
+      </div>
+    </div>
+  );
 
   const filteredProjects = filter === 'All' 
     ? projects 
@@ -58,11 +118,17 @@ const Projects: React.FC = () => {
               className="group relative overflow-hidden rounded-md shadow-md cursor-pointer hover:shadow-2xl transition-all duration-500 ease-out"
             >
               <div className="aspect-w-4 aspect-h-3 h-72 overflow-hidden bg-gray-200">
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                />
+                {imageLoadError.has(project.image) ? (
+                  <ImagePlaceholder title={project.title} />
+                ) : (
+                  <img 
+                    src={optimizeImageUrl(project.image, 'thumb')}
+                    alt={project.title}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                    loading="lazy"
+                    onError={() => handleImageError(project.image)}
+                  />
+                )}
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
               
@@ -103,12 +169,25 @@ const Projects: React.FC = () => {
               <X size={24} />
             </button>
             
-            <div className="w-full md:w-1/2 h-64 md:h-auto relative">
-              <img 
-                src={selectedProject.image} 
-                alt={selectedProject.title} 
-                className="w-full h-full object-cover"
-              />
+            <div className="w-full md:w-1/2 h-64 md:h-auto relative group bg-gray-200">
+              {imageLoadError.has(selectedProject.image) ? (
+                <ImagePlaceholder title={selectedProject.title} />
+              ) : (
+                <>
+                  <img 
+                    src={optimizeImageUrl(selectedProject.image, 'medium')}
+                    alt={selectedProject.title}
+                    className="w-full h-full object-cover"
+                    onError={() => handleImageError(selectedProject.image)}
+                  />
+                  <button
+                    onClick={() => setLightboxImage(selectedProject.image)}
+                    className="absolute inset-0 bg-black/0 group-hover:bg-black/30 flex items-center justify-center transition-colors duration-300 cursor-pointer"
+                  >
+                    <Maximize2 size={32} className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </button>
+                </>
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden"></div>
             </div>
 
@@ -156,6 +235,14 @@ const Projects: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Lightbox Modal */}
+      {lightboxImage && (
+        <LightboxViewer 
+          image={lightboxImage} 
+          onClose={() => setLightboxImage(null)} 
+        />
       )}
     </section>
   );

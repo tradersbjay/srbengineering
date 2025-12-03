@@ -60,17 +60,21 @@ export const getServiceIcon = (iconName?: string) => {
 
   // If iconName is a URL or data URI, render it as an image with brand color
   if (iconName && /^(https?:\/\/|data:|\/)/i.test(iconName)) {
-    // For external URLs (http/https), use proxy on production to avoid CORS issues
+    // For external URLs (http/https), use appropriate proxy method
     let imageUrl = iconName;
     
-    // Check if it's an external URL (not data URI) and we're in production
+    // Check if it's an external URL (not data URI)
     if (/^https?:\/\//.test(iconName) && typeof window !== 'undefined') {
-      // On production (vercel), use the proxy endpoint
-      const isProduction = window.location.hostname !== 'localhost' && 
-                          window.location.hostname !== '127.0.0.1';
+      const isProduction = window.location.hostname.includes('srbeng.com') || 
+                          window.location.hostname.includes('vercel.app');
       
       if (isProduction) {
+        // On production (vercel), use the custom proxy endpoint
         imageUrl = `/api/proxy-icon?url=${encodeURIComponent(iconName)}`;
+      } else {
+        // On development, use public CORS proxy service
+        // corsproxy.io is free and reliable for CORS-restricted resources
+        imageUrl = `https://corsproxy.io/?${encodeURIComponent(iconName)}`;
       }
     }
     
@@ -82,9 +86,10 @@ export const getServiceIcon = (iconName?: string) => {
         className="w-10 h-10 object-contain rounded" 
         style={{ filter: 'brightness(0) saturate(100%) invert(28%) sepia(84%) saturate(1211%) hue-rotate(172deg) brightness(101%) contrast(101%)' }}
         onError={(e) => {
-          // If proxy fails, try the original URL
-          if ((e.target as HTMLImageElement).src !== iconName) {
-            (e.target as HTMLImageElement).src = iconName;
+          const img = e.target as HTMLImageElement;
+          // If proxy fails, try direct URL as last resort
+          if (!img.src.includes('corsproxy') && !img.src.includes('/api/proxy-icon') && img.src !== iconName) {
+            img.src = iconName;
           }
         }}
       />
