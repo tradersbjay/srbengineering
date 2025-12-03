@@ -60,13 +60,33 @@ export const getServiceIcon = (iconName?: string) => {
 
   // If iconName is a URL or data URI, render it as an image with brand color
   if (iconName && /^(https?:\/\/|data:|\/)/i.test(iconName)) {
+    // For external URLs (http/https), use proxy on production to avoid CORS issues
+    let imageUrl = iconName;
+    
+    // Check if it's an external URL (not data URI) and we're in production
+    if (/^https?:\/\//.test(iconName) && typeof window !== 'undefined') {
+      // On production (vercel), use the proxy endpoint
+      const isProduction = window.location.hostname !== 'localhost' && 
+                          window.location.hostname !== '127.0.0.1';
+      
+      if (isProduction) {
+        imageUrl = `/api/proxy-icon?url=${encodeURIComponent(iconName)}`;
+      }
+    }
+    
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img 
-        src={iconName} 
+        src={imageUrl} 
         alt="service icon" 
         className="w-10 h-10 object-contain rounded" 
         style={{ filter: 'brightness(0) saturate(100%) invert(28%) sepia(84%) saturate(1211%) hue-rotate(172deg) brightness(101%) contrast(101%)' }}
+        onError={(e) => {
+          // If proxy fails, try the original URL
+          if ((e.target as HTMLImageElement).src !== iconName) {
+            (e.target as HTMLImageElement).src = iconName;
+          }
+        }}
       />
     );
   }
