@@ -71,9 +71,28 @@ const Projects: React.FC = () => {
     </div>
   );
 
+  // Sort projects by year (latest first), with special handling for "Ongoing" projects
+  const sortProjectsByDate = (projectList: Project[]) => {
+    return [...projectList].sort((a, b) => {
+      const yearA = a.year || '0';
+      const yearB = b.year || '0';
+      
+      // Extract the first year (in case of "2022-2024" format)
+      const getYear = (yearStr: string) => {
+        if (yearStr.includes('Ongoing')) return 9999; // Put ongoing at top
+        const match = yearStr.match(/(\d{4})/);
+        return match ? parseInt(match[1]) : 0;
+      };
+      
+      const numA = getYear(yearA);
+      const numB = getYear(yearB);
+      return numB - numA; // Descending order (latest first)
+    });
+  };
+
   const filteredProjects = filter === 'All' 
-    ? projects 
-    : projects.filter(p => p.category === filter);
+    ? sortProjectsByDate(projects)
+    : sortProjectsByDate(projects.filter(p => p.category === filter));
 
   const openModal = (project: Project) => {
     setSelectedProject(project);
