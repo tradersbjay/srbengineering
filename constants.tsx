@@ -17,7 +17,7 @@ export const COMPANY_INFO = {
   phone: "+977 9843919796",
   email: "info@srbeng.com",
   tagline: "Design & Build Solutions Since 2018",
-  description: "S.R.B Engineering & Construction Pvt. Ltd. is a dynamic Design and Build company, established in 2018, specializing in delivering end-to-end construction solutions. We combine innovative design, engineering expertise, and quality craftsmanship to bring our clients’ visions to life.\n In addition to turnkey construction services, we also provide comprehensive engineering consulting services, offering technical guidance, feasibility assessments, detailed engineering design, project management support, and sustainable infrastructure solutions tailored to client needs."
+  description: "S.R.B Engineering & Construction Pvt. Ltd. is a dynamic company, established in 2018, specializes in delivering end-to-end construction solutions. We combine innovative design, engineering expertise, and quality craftsmanship to bring our clients’ visions to life.\n In addition to turnkey construction services, we also provide comprehensive engineering consulting services, offering technical guidance, feasibility assessments, detailed engineering design, project management support, and sustainable infrastructure solutions tailored to client needs."
 };
 
 export const MISSION_VISION = {

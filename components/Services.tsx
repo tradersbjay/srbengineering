@@ -11,9 +11,6 @@ const Services: React.FC = () => {
         <div className="text-center mb-16">
           <h2 className="text-brand-blue font-bold tracking-wider uppercase text-sm mb-3">What We Do</h2>
           <h3 className="text-3xl md:text-4xl font-bold text-gray-900">Comprehensive Engineering and Construction Solutions</h3>
-          <p className="mt-4 max-w-2xl mx-auto text-gray-600">
-            Expanding beyond traditional construction, we offer expert consultancy in green energy and water supply systems.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
