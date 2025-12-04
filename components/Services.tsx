@@ -5,6 +5,11 @@ import { getServiceIcon } from '../utils.tsx';
 const Services: React.FC = () => {
   const { services } = useData();
 
+  // Sort services alphabetically by title
+  const sortedServices = [...services].sort((a, b) => 
+    a.title.localeCompare(b.title)
+  );
+
   return (
     <section id="services" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,7 +19,7 @@ const Services: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
+          {sortedServices.map((service, index) => (
             <div 
               key={service.id || index} 
               className="bg-white p-8 rounded-sm shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-b-4 border-transparent hover:border-brand-blue group"
