@@ -42,7 +42,6 @@ const Navbar: React.FC = () => {
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
     { name: 'Services', href: '#services' },
-    { name: 'Team', href: '#team' },
     { name: 'Projects', href: '#projects' },
   ];
 
@@ -123,8 +122,8 @@ const Navbar: React.FC = () => {
       <div
         id="mobile-menu"
         className={`md:hidden bg-white border-t border-gray-100 origin-top transition-all duration-300 ease-in-out overflow-hidden ${isOpen
-            ? 'max-h-96 opacity-100 visible shadow-lg'
-            : 'max-h-0 opacity-0 invisible'
+          ? 'max-h-96 opacity-100 visible shadow-lg'
+          : 'max-h-0 opacity-0 invisible'
           }`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
