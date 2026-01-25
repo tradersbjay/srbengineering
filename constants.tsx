@@ -17,7 +17,7 @@ export const COMPANY_INFO = {
   phone: "+977 9843919796",
   email: "info@srbeng.com",
   tagline: "Design & Build Solutions Since 2018",
-  description: "S.R.B Engineering & Construction Pvt. Ltd. is a dynamic company, established in 2018, specializes in delivering end-to-end construction solutions. We combine innovative design, engineering expertise, and quality craftsmanship to bring our clients’ visions to life.\n In addition to turnkey construction services, we also provide comprehensive engineering consulting services, offering technical guidance, feasibility assessments, detailed engineering design, project management support, and sustainable infrastructure solutions tailored to client needs."
+  description: "S.R.B Engineering & Construction Pvt. Ltd. is a dynamic company, established in 2018, that specializes in delivering end-to-end engineering solutions. We combine innovative design, engineering expertise, and quality craftsmanship to bring our clients’ visions to life.\n In addition to turnkey construction services, we also provide comprehensive engineering consulting services, offering technical guidance, feasibility assessments, detailed engineering design, project management support, and sustainable infrastructure solutions tailored to client needs."
 };
 
 export const MISSION_VISION = {
@@ -26,6 +26,24 @@ export const MISSION_VISION = {
 };
 
 export const TEAM_MEMBERS: TeamMember[] = [
+  {
+    name: "Er. Ramesh Bisunke",
+    role: "Managing Director",
+    qualifications: ["B.E. Civil Engineering", "M.Sc. Construction Management"],
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    name: "Er. Sunil Sharma",
+    role: "Senior Structural Engineer",
+    qualifications: ["B.E. Civil Engineering", "M.E. Structural Engineering"],
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    name: "Ar. Priya Thapa",
+    role: "Senior Architect",
+    qualifications: ["B.Arch", "Sustainable Design Planning"],
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
+  }
 ];
 
 export const INITIAL_PROJECTS: Project[] = [
@@ -91,6 +109,15 @@ export const INITIAL_PROJECTS: Project[] = [
     location: "Kamalpokhari, Kathmandu",
     image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&q=80&w=1200", // House
     description: "Complete residential construction project delivered with excellence, focusing on traditional aesthetics blended with modern structural stability."
+  },
+  {
+    id: "p8",
+    title: "Bridge Feasibility Study",
+    year: "2023",
+    category: "Consulting",
+    location: "Pokhara, Kaski",
+    image: "https://images.unsplash.com/photo-1545322428-c90664871891?auto=format&fit=crop&q=80&w=1200",
+    description: "Comprehensive technical and financial feasibility study for a proposed suspension bridge. Included soil investigation, hydrological analysis, and cost-benefit assessments."
   }
 ];
 

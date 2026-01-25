@@ -7,6 +7,7 @@ import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Admin from './components/Admin';
+import Team from './components/Team';
 import { DataProvider } from './DataContext';
 
 const MainLayout: React.FC = () => {
@@ -17,6 +18,7 @@ const MainLayout: React.FC = () => {
         <Hero />
         <About />
         <Services />
+        <Team />
         <Projects />
         <Contact />
       </main>
