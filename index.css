@@ -26,18 +26,18 @@ html {
   transition: none;
 }
 
-/* Logo blink animation */
-@keyframes logo-blink {
+/* Logo pulse animation */
+@keyframes logo-pulse {
   0%, 100% {
-    opacity: 1;
+    transform: scale(1);
     box-shadow: 0 0 8px rgba(234, 179, 8, 0.6);
   }
   50% {
-    opacity: 0.4;
-    box-shadow: 0 0 2px rgba(234, 179, 8, 0.2);
+    transform: scale(1.15);
+    box-shadow: 0 0 14px rgba(234, 179, 8, 0.8);
   }
 }
 
 .logo-blink {
-  animation: logo-blink 2s ease-in-out infinite;
+  animation: logo-pulse 2s ease-in-out infinite;
 }
