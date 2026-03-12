@@ -25,3 +25,19 @@ html {
 [class*="animate-"] {
   transition: none;
 }
+
+/* Logo blink animation */
+@keyframes logo-blink {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(234, 179, 8, 0.6);
+  }
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 2px rgba(234, 179, 8, 0.2);
+  }
+}
+
+.logo-blink {
+  animation: logo-blink 2s ease-in-out infinite;
+}

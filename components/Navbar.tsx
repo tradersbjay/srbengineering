@@ -63,7 +63,7 @@ const Navbar: React.FC = () => {
               aria-label="S.R.B. Engineering & Construction - Home"
             >
               {/* Badge - Responsive Size */}
-              <div className="w-12 h-6 md:w-20 md:h-10 bg-brand-yellow flex items-center justify-center font-bold text-xs md:text-xl rounded shadow-sm text-black flex-shrink-0">
+              <div className="logo-blink w-12 h-6 md:w-20 md:h-10 bg-brand-yellow flex items-center justify-center font-bold text-xs md:text-xl rounded shadow-sm text-black flex-shrink-0">
                 S.R.B.
               </div>
 

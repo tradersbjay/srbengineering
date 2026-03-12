@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 md:gap-3 mb-4">
-              <div className="w-14 h-6 md:w-20 md:h-8 bg-brand-yellow flex items-center justify-center font-bold text-black rounded text-xs md:text-lg flex-shrink-0">
+              <div className="logo-blink w-14 h-6 md:w-20 md:h-8 bg-brand-yellow flex items-center justify-center font-bold text-black rounded text-xs md:text-lg flex-shrink-0">
                 S.R.B.
               </div>
               <span className="font-bold text-sm md:text-xl tracking-tight line-clamp-2">Engineering & Construction</span>
@@ -37,11 +37,10 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-bold mb-6 text-brand-yellow">Our Expertise</h4>
             <ul className="space-y-3 text-sm text-gray-100">
-              <li>Construction & Design</li>
-              <li>Structural Analysis</li>
-              <li>Engineering Consulting Services</li>
-              <li>Water Supply Systems</li>
-              <li>Prefabricated Structures</li>
+              <li>Consulting Services</li>
+              <li>Architectural Services (Interior, Exterior & Landscape)</li>
+              <li>Construction</li>
+              <li>Project Management</li>
             </ul>
           </div>
 
